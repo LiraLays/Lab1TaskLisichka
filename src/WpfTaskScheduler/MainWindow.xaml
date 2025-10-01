@@ -8,7 +8,8 @@
 		ResizeMode="NoResize"
 		Title="Планировщик"
 		SizeToContent="WidthAndHeight">
-	<Grid Background="White"
+	<Grid Name ="grid"
+        Background="White"
 		  Width="518"
 		  Height="504">
 

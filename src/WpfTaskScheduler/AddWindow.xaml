@@ -7,15 +7,15 @@
         xmlns:Specialized="clr-namespace:System.Collections.Specialized;assembly=System.Collections.Specialized" x:Class="WpfTaskScheduler.AddWindow"
         mc:Ignorable="d"
         WindowStyle="None"
-        Title="Добавить Задачу" Height="146" Width="157" ResizeMode="NoResize">
+        Title="Добавить Задачу" Height="146" Width="213" ResizeMode="NoResize">
     <Grid>
         <Label x:Name="label" Content="Дата" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top"/>
-        <DatePicker x:Name="datePicker" HorizontalAlignment="Left" Margin="45,37,0,0" VerticalAlignment="Top"/>
+        <DatePicker x:Name="datePicker" HorizontalAlignment="Left" Margin="45,37,0,0" VerticalAlignment="Top" Width="158"/>
         <Label x:Name="label_Copy" Content="Приоритет" HorizontalAlignment="Left" Margin="10,66,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="85,66,0,0" VerticalAlignment="Top" Width="62"/>
-        <Button x:Name="button" Content="Добавить" HorizontalAlignment="Left" Margin="10,94,0,0" VerticalAlignment="Top" Width="137" Click="button_Click"/>
-        <Button x:Name="button_Copy" Content="Отмена" HorizontalAlignment="Left" Margin="10,119,0,0" VerticalAlignment="Top" Width="137"/>
+        <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="85,66,0,0" VerticalAlignment="Top" Width="118"/>
+        <Button x:Name="button" Content="Добавить" HorizontalAlignment="Center" Margin="0,94,0,0" VerticalAlignment="Top" Width="193" Click="button_Click"/>
+        <Button x:Name="button_Copy" Content="Отмена" HorizontalAlignment="Center" Margin="0,119,0,0" VerticalAlignment="Top" Width="193" Click="button_Copy_Click"/>
         <Label x:Name="label_Copy1" Content="Имя" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="45,9,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="102" Height="23"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="45,9,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" Height="23"/>
     </Grid>
 </Window>

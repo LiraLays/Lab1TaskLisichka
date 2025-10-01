@@ -6,11 +6,14 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Linq;
-
+using System.Windows.Threading;
+using Microsoft.VisualBasic;
+using System.Windows.Input;
 namespace WpfTaskScheduler
 {
 	public partial class MainWindow : Window
 	{
+
 		private MainViewModel _viewModel;
 		private ITaskSchedulerService _taskService;
 
@@ -26,9 +29,32 @@ namespace WpfTaskScheduler
 			// Подписка на изменения фильтра
 			FilterCheckBox.Checked += FilterCheckBox_Changed;
 			FilterCheckBox.Unchecked += FilterCheckBox_Changed;
-		}
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(0.25);
+            timer.Tick += new EventHandler(dispatcherTimer_Tick);
+            timer.Start();
 
-		private void UpdateConditionIndicators()
+        }
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+			//colo();
+        }
+        byte r;
+		byte b = 254;
+
+        Random rand = new Random();
+        byte[] randomBytes = new byte[3];
+        private void colo()
+        {
+            rand.NextBytes(randomBytes);
+            r = randomBytes[0];
+			
+			b = randomBytes[1];
+			grid.Background = new SolidColorBrush(Color.FromRgb(r, randomBytes[2],b));
+			
+        }
+        private void UpdateConditionIndicators()
 		{
 			// Обновляем цвет индикаторов на основе условий
 			PreConditionIndicator.Fill = _viewModel.PreConditionMet ? Brushes.Green : Brushes.Red;
@@ -81,7 +107,14 @@ namespace WpfTaskScheduler
 		{
 			try
 			{
-				AddWindow addWindow = new AddWindow();
+                foreach (Window window in Application.Current.Windows)
+				{
+					if(window.Title == "Добавить Задачу")
+					{
+						window.Close();
+					}
+				}
+                AddWindow addWindow = new AddWindow();
 				addWindow.DataContext = _viewModel;
 				addWindow.Show();
 				addWindow.main = this;
@@ -96,14 +129,21 @@ namespace WpfTaskScheduler
 				UpdateConditionIndicators();
 			}
 		}
+		TaskItem selectedTask;
 
+        public void MoveTask(DateTime date)
+		{
+            bool result = _taskService.MoveTask(selectedTask, date);
+            _viewModel.UpdatePostCondition(result, result ? "" : "Ошибка переноса");
+            _viewModel.RefreshTasks();
+        }
 		private void MoveTaskButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
 				_viewModel.ResetConditions();
 
-				var selectedTask = TasksListBox.SelectedItem as TaskItem;
+                selectedTask = TasksListBox.SelectedItem as TaskItem;
 				if (selectedTask == null)
 				{
 					MessageBox.Show("Выберите задачу для переноса", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -129,12 +169,14 @@ namespace WpfTaskScheduler
 					return;
 				}
 
-				// Переносим на завтра
-				bool result = _taskService.MoveTask(selectedTask, DateTime.Now.AddDays(1));
-				_viewModel.UpdatePostCondition(result, result ? "" : "Ошибка переноса");
+                // Переносим на**й
+                ChangeDateWindow changeWindow = new ChangeDateWindow();
+                changeWindow.DataContext = _viewModel;
+                changeWindow.Show();
+                changeWindow.main = this;
 
-				// Обновляем UI
-				_viewModel.RefreshTasks();
+                // Обновляем UI
+                
 				UpdateConditionIndicators();
 			}
 			catch (Exception ex)
@@ -176,42 +218,75 @@ namespace WpfTaskScheduler
 				return;
 			}
 
-			try
-			{
-				_viewModel.ResetConditions();
+			DateTime? dateFilter = null;
+			int? priorityFilter = null;
 
-				// Проверка предусловий
-				if (byDeadline || byPriority)
+			// Получаем параметры фильтрации
+			if (byDeadline)
+			{
+				string dateInput = Interaction.InputBox("Введите дату для фильтрации (dd.MM.yyyy)");
+				try
 				{
-					_viewModel.UpdatePreCondition(true);
+					dateFilter = DateTime.Parse(dateInput);
 				}
-				else
+				catch (Exception ex)
 				{
-					_viewModel.UpdatePreCondition(false, "Выберите критерий фильтрации");
+					MessageBox.Show("Неверный формат даты. Используйте dd.MM.yyyy");
 					return;
 				}
+			}
 
-				var filteredTasks = _taskService.FilterTasks(byDeadline, byPriority);
+			if (byPriority)
+			{
+				string priorityInput = Interaction.InputBox("Введите приоритет для фильтрации (1-4)");
+				try
+				{
+					int priority = int.Parse(priorityInput);
+					if (priority < 1 || priority > 4)
+					{
+						MessageBox.Show("Приоритет должен быть от 1 до 4");
+						return;
+					}
+					priorityFilter = priority;
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show("Неверный приоритет. Введите число от 1 до 4");
+					return;
+				}
+			}
+
+			// Применяем фильтрацию
+			try
+			{
+				var filteredTasks = _taskService.Tasks.Where(task =>
+				{
+					bool matches = true;
+
+					if (byDeadline && dateFilter.HasValue)
+						matches = matches && task.Deadline.Date == dateFilter.Value.Date;
+
+					if (byPriority && priorityFilter.HasValue)
+						matches = matches && task.Priority == priorityFilter.Value;
+
+					return matches;
+				}).ToList();
+
+				// Обновляем UI с отфильтрованными задачами
 				_viewModel.Tasks.Clear();
 				foreach (var task in filteredTasks)
 				{
 					_viewModel.Tasks.Add(task);
 				}
 
+				// Обновляем условия
+				_viewModel.UpdatePreCondition(true);
 				_viewModel.UpdatePostCondition(true);
 				UpdateConditionIndicators();
-
-				// Показываем сообщение, если результатов нет
-				if (filteredTasks.Count == 0)
-				{
-					MessageBox.Show("Задачи по выбранным критериям не найдены", "Фильтр",
-						MessageBoxButton.OK, MessageBoxImage.Information);
-				}
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Ошибка фильтрации: {ex.Message}", "Ошибка",
-					MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show($"Ошибка фильтрации: {ex.Message}");
 				_viewModel.UpdatePostCondition(false, ex.Message);
 				UpdateConditionIndicators();
 			}

@@ -10,7 +10,7 @@ namespace Lab1_TaskScheduler.Contracts
 				"AddTask", new OperationContract
 				{
 					Name = "Добавить задачу",
-					PreCondition = "1. Задача не null\n2. Название не пустое\n3. Дедлайн в будущем\n4. Приоритет от 1 до 5",
+					PreCondition = "1. Задача не null\n2. Название не пустое\n3. Дедлайн в будущем\n4. Приоритет от 1 до 4",
 					PostCondition = "1. Задача добавлена в список\n2. Список содержит добавленную задачу",
 					Effects = "Увеличивает количество задач в планировщике",
 					ValidExample = "Title: 'Meeting', Deadline: завтра, Priority: 3",

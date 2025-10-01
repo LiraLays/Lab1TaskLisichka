@@ -19,7 +19,7 @@ namespace Lab1_TaskScheduler.Services
 			Guard.Requires(task != null, "Задача не может быть null");
 			Guard.Requires(!string.IsNullOrWhiteSpace(task.Title), "Название задачи не может быть пустым");
 			Guard.Requires(task.Deadline > DateTime.Now, "Дедлайн должен быть в будущем");
-			Guard.Requires(task.Priority >= 1 && task.Priority <= 5, "Приоритет должен быть от 1 до 5");
+			Guard.Requires(task.Priority >= 1 && task.Priority <= 4, "Приоритет должен быть от 1 до 4");
 
 			bool result = false;
 
@@ -95,7 +95,7 @@ namespace Lab1_TaskScheduler.Services
 			if (byPriority)
 			{
 				Debug.Assert(!result.Any(t => t.Priority < 4),
-					"При фильтрации по приоритету все задачи должны иметь приоритет 4 или 5");
+					"При фильтрации по приоритету все задачи должны иметь приоритет 4");
 			}
 
 			return result.AsReadOnly();

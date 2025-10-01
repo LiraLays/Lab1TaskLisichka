@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace WpfTaskScheduler
 {
@@ -27,19 +28,25 @@ namespace WpfTaskScheduler
         {
             InitializeComponent();
             comboBox.Items.Clear();
-            foreach (string item in new string[] { "1", "2", "3", "4" })
+            foreach (string item in new string[] { "Не срочно (4)", "Низкий (3)", "Средний (2)", "Высокий (1)" })
             {
                 comboBox.Items.Add(item);
             }
+            
         }
-
+        
         private void button_Click(object sender, RoutedEventArgs e)
         {
             if (datePicker.Text.Replace(" ","") == "" || comboBox.Text.Replace(" ", "") == "" || textBox.Text.Replace(" ", "") == "") { MessageBox.Show("Некорректный ввод.");return;}
             date = datePicker.Text;
-            ladaPriora = comboBox.Text;
+            ladaPriora = comboBox.Text.ToCharArray()[^2].ToString();
             name = textBox.Text;
             main.AddTaskSucessful(date, ladaPriora, name);
+            Close();
+        }
+
+        private void button_Copy_Click(object sender, RoutedEventArgs e)
+        {
             Close();
         }
     }

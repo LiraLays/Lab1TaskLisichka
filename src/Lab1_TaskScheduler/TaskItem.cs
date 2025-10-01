@@ -12,6 +12,19 @@ namespace Lab1_TaskScheduler.Models
 		private int _priority;
 		private bool _isCompleted;
 
+		private string GetPriorityDisplay()
+		{
+			return Priority switch
+			{
+				1 => $"Высокий ({Priority})",
+				2 => $"Средний ({Priority})",
+				3 => $"Низкий ({Priority})",
+				4 => $"Не срочно ({Priority})",
+				5 => $"Очень низкий ({Priority})", // на случай если у вас 5 приоритетов
+				_ => $"Приоритет {Priority}"
+			};
+		}
+
 		public string Title
 		{
 			get => _title;
@@ -33,7 +46,12 @@ namespace Lab1_TaskScheduler.Models
 		public int Priority
 		{
 			get => _priority;
-			set { _priority = value; OnPropertyChanged(); OnPropertyChanged(nameof(PriorityDisplay)); }
+			set
+			{
+				_priority = value;
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(PriorityDisplay)); // Добавьте эту строку
+			}
 		}
 
 		public DateTime CreatedDate { get; set; } = DateTime.Now;
@@ -45,12 +63,12 @@ namespace Lab1_TaskScheduler.Models
 		}
 
 		// Дополнительные свойства для отображения
-		public string DeadlineDisplay => Deadline.ToString("dd.MM.yyyy HH:mm");
-		public string PriorityDisplay => $"Приоритет: {Priority}";
+		public string DeadlineDisplay => Deadline.ToString("dd.MM.yyyy");
+		public string PriorityDisplay => $"Приоритет: {GetPriorityDisplay()}";
 
 		public override string ToString()
 		{
-			return $"{Title} (Приоритет: {Priority}, Дедлайн: {Deadline:dd.MM.yyyy HH:mm})";
+			return $"{Title} (Приоритет: {GetPriorityDisplay()}, Дедлайн: {Deadline:dd.MM.yyyy})";
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
