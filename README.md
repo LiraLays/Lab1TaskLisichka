@@ -8,17 +8,20 @@ WPF приложение "Планировщик задач", демонстри
 text
 Lab1_TaskScheduler/
 src/
-Lab1_TaskScheduler/ # Библиотека классов (.NET 8)
-Models/ # Модели данных
-Services/ # Бизнес-логика
-Contracts/ # Контракты операций
-Utils/ # Вспомогательные классы
-WpfTaskScheduler/ # WPF приложение (.NET 8 Windows)
-ViewModels/ # Model-View-ViewModel
-Views/ # Пользовательский интерфейс
+Lab1_TaskScheduler (Библиотека классов (.NET 8))
+Models (Модели данных)
+Services (Бизнес-логика)
+Contracts (Контракты операций)
+Utils (Вспомогательные классы)
+WpfTaskScheduler (WPF приложение (.NET 8 Windows))
+ViewModels (Model-View-ViewModel)
+Views (Пользовательский интерфейс)
 MainWindow.xaml
-Lab1_TaskScheduler.sln # Решение Visual Studio
-
+Lab1_TaskScheduler.sln (Решение Visual Studio)
+docs/
+Отчёт
+tests/
+Lab1_TaskScheduler.Tests.csproj (Тесты)
 Функциональность
 🔧 Реализованные операции
 Добавление задачи
