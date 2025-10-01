@@ -35,51 +35,59 @@ namespace WpfTaskScheduler
 			PostConditionIndicator.Fill = _viewModel.PostConditionMet ? Brushes.Green : Brushes.Red;
 		}
 
+		public void AddTaskSucessful(string date,string prior,string name)
+		{
+            // Создаем тестовую задачу (в реальном приложении будет диалог ввода)
+            var newTask = new TaskItem
+            {
+                Title = name,
+                Description = "Описание задачи",
+                Deadline = DateTime.Parse(date),
+                Priority = Int32.Parse(prior)
+            };
+
+            // Проверка предусловий
+            try
+            {
+                // Проверяем предусловия через Guard
+                if (newTask != null &&
+                    !string.IsNullOrWhiteSpace(newTask.Title) &&
+                    newTask.Deadline > DateTime.Now &&
+                    newTask.Priority >= 1 && newTask.Priority <= 5)
+                {
+                    _viewModel.UpdatePreCondition(true);
+                }
+                else
+                {
+                    _viewModel.UpdatePreCondition(false, "Невалидные данные задачи");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _viewModel.UpdatePreCondition(false, ex.Message);
+                return;
+            }
+
+            // Выполняем операцию
+            bool result = _taskService.AddTask(newTask);
+            _viewModel.UpdatePostCondition(result, result ? "" : "Ошибка добавления");
+
+            // Обновляем UI
+            _viewModel.RefreshTasks();
+            UpdateConditionIndicators();
+        }
 		private void AddTaskButton_Click(object sender, RoutedEventArgs e)
 		{
 			try
 			{
+				AddWindow addWindow = new AddWindow();
+				addWindow.DataContext = _viewModel;
+				addWindow.Show();
+				addWindow.main = this;
 				_viewModel.ResetConditions();
 
-				// Создаем тестовую задачу (в реальном приложении будет диалог ввода)
-				var newTask = new TaskItem
-				{
-					Title = "Новая задача " + (DateTime.Now.Ticks % 1000),
-					Description = "Описание задачи",
-					Deadline = DateTime.Now.AddDays(1),
-					Priority = 3
-				};
-
-				// Проверка предусловий
-				try
-				{
-					// Проверяем предусловия через Guard
-					if (newTask != null &&
-						!string.IsNullOrWhiteSpace(newTask.Title) &&
-						newTask.Deadline > DateTime.Now &&
-						newTask.Priority >= 1 && newTask.Priority <= 5)
-					{
-						_viewModel.UpdatePreCondition(true);
-					}
-					else
-					{
-						_viewModel.UpdatePreCondition(false, "Невалидные данные задачи");
-						return;
-					}
-				}
-				catch (Exception ex)
-				{
-					_viewModel.UpdatePreCondition(false, ex.Message);
-					return;
-				}
-
-				// Выполняем операцию
-				bool result = _taskService.AddTask(newTask);
-				_viewModel.UpdatePostCondition(result, result ? "" : "Ошибка добавления");
-
-				// Обновляем UI
-				_viewModel.RefreshTasks();
-				UpdateConditionIndicators();
+				
 			}
 			catch (Exception ex)
 			{
