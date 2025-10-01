@@ -40,7 +40,7 @@ namespace Lab1_TaskScheduler.Tests
 			var display = task.DeadlineDisplay;
 
 			// Assert
-			Assert.Equal("15.01.2024 14:30", display);
+			Assert.Equal("15.01.2024", display);
 		}
 
 		[Fact]
@@ -53,7 +53,7 @@ namespace Lab1_TaskScheduler.Tests
 			var display = task.PriorityDisplay;
 
 			// Assert
-			Assert.Equal("Приоритет: 4", display);
+			Assert.Equal("Приоритет: Не срочно (4)", display);
 		}
 
 		[Fact]
@@ -71,7 +71,7 @@ namespace Lab1_TaskScheduler.Tests
 			var result = task.ToString();
 
 			// Assert
-			Assert.Equal("Тестовая задача (Приоритет: 3, Дедлайн: 15.01.2024 10:00)", result);
+			Assert.Equal("Тестовая задача (Приоритет: Низкий (3), Дедлайн: 15.01.2024)", result);
 		}
 	}
 }
